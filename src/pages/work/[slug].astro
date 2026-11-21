@@ -1,0 +1,37 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Tags from '../../components/Tags.astro';
+import Icon from '../../components/Icon.astro';
+import { profile } from '../../data/profile';
+
+// Only entries marked `caseStudy: true` get their own page.
+export async function getStaticPaths() {
+  const work = await getCollection('work', ({ data }) => data.caseStudy);
+  return work.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { data } = entry;
+---
+
+<Base title={`${data.title} — ${profile.name}`} description={data.summary}>
+  <article class="pt-12 sm:pt-16">
+    <a href="/#work" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-fg">
+      <Icon name="arrow-left" /> All work
+    </a>
+
+    <header class="mt-8 border-b border-line pb-8">
+      <p class="font-mono text-xs text-muted">{data.org} · {data.year}</p>
+      <h1 class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{data.title}</h1>
+      <p class="mt-4 text-lg leading-8 text-muted">{data.summary}</p>
+      <p class="mt-4 font-mono text-sm text-accent">→ {data.outcome}</p>
+      <div class="mt-5"><Tags items={data.stack} /></div>
+    </header>
+
+    <div class="prose mt-10">
+      <Content />
+    </div>
+  </article>
+</Base>

@@ -1,0 +1,136 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --fg: #18181b;
+  --muted: #5b5b66;
+  --line: #e4e4e7;
+  --accent: #0f766e;
+  --accent-soft: #ccfbf1;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0b0b0d;
+  --surface: #131316;
+  --fg: #e7e7ea;
+  --muted: #9a9aa6;
+  --line: #26262b;
+  --accent: #2dd4bf;
+  --accent-soft: #134e4a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    background: var(--accent-soft);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Long-form case-study pages */
+.prose {
+  @apply text-[1.0625rem] leading-8 text-fg;
+}
+.prose > * + * {
+  @apply mt-5;
+}
+.prose h2 {
+  @apply mt-12 text-xl font-semibold tracking-tight;
+}
+.prose h3 {
+  @apply mt-8 font-semibold;
+}
+.prose a {
+  @apply text-accent underline underline-offset-4;
+}
+.prose ul {
+  @apply list-disc pl-6 marker:text-muted;
+}
+.prose ol {
+  @apply list-decimal pl-6 marker:text-muted;
+}
+.prose li + li {
+  @apply mt-2;
+}
+.prose :not(pre) > code {
+  @apply rounded bg-surface border border-line px-1.5 py-0.5 font-mono text-[0.9em];
+}
+.prose pre {
+  @apply overflow-x-auto rounded-lg border border-line p-4 font-mono text-sm leading-6;
+}
+.prose table {
+  @apply w-full border-collapse text-left text-[0.9375rem] leading-6;
+}
+.prose th {
+  @apply border-b border-line px-3 py-2.5 align-bottom font-semibold first:pl-0;
+}
+.prose td {
+  @apply border-b border-line px-3 py-3 align-top text-muted first:pl-0 first:font-medium first:text-fg;
+}
+.prose td:first-child {
+  min-width: 5.5rem;
+}
+@media (min-width: 640px) {
+  .prose td:first-child {
+    min-width: 8.5rem;
+  }
+}
+.prose td strong {
+  @apply text-fg;
+}
+.prose figure {
+  @apply my-10;
+}
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+.prose blockquote {
+  @apply border-l-2 border-accent pl-4 text-muted;
+}
+.prose img {
+  @apply rounded-lg border border-line;
+}

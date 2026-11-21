@@ -1,0 +1,243 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Tags from '../components/Tags.astro';
+import Icon from '../components/Icon.astro';
+import { profile, metrics, experience, projects, skills, education } from '../data/profile';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base>
+  <!-- Hero -->
+  <section class="pt-16 sm:pt-24" aria-labelledby="hero-title">
+    {
+      profile.availability && (
+        <p class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 font-mono text-xs text-muted">
+          <span class="relative flex size-2">
+            <span class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+            <span class="relative inline-flex size-2 rounded-full bg-emerald-500" />
+          </span>
+          {profile.availability}
+        </p>
+      )
+    }
+
+    <h1 id="hero-title" class="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
+      {profile.name}
+    </h1>
+    <p class="mt-2 flex flex-wrap items-center gap-x-2 text-lg text-muted sm:text-xl">
+      <span>{profile.role}</span>
+      <span class="hidden text-line sm:inline" aria-hidden="true">/</span>
+      <span class="inline-flex items-center gap-1"><Icon name="map-pin" class="size-4" />{profile.location}</span>
+    </p>
+
+    <p class="mt-8 max-w-2xl text-2xl leading-snug font-medium tracking-tight text-balance sm:text-[1.75rem]">
+      {profile.headline}
+    </p>
+    <p class="mt-5 max-w-2xl leading-7 text-muted">{profile.summary}</p>
+
+    <ul class="mt-6 flex flex-wrap gap-2" aria-label="Core stack">
+      {
+        profile.focus.map((item, i) => (
+          <li
+            class:list={[
+              'rounded-md border px-2.5 py-1 font-mono text-xs',
+              i === 0 ? 'border-accent/50 bg-accent-soft/40 text-fg' : 'border-line bg-surface text-muted',
+            ]}
+          >
+            {item}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <a
+        href={profile.resume}
+        download={profile.resumeFileName}
+        class="inline-flex items-center gap-2 rounded-md bg-fg px-4 py-2.5 text-sm font-medium text-bg transition-opacity hover:opacity-85"
+      >
+        <Icon name="download" /> Download resume
+      </a>
+      <a
+        href={`mailto:${profile.email}`}
+        class="inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2.5 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+      >
+        <Icon name="mail" /> Email me
+      </a>
+      <div class="flex items-center gap-4 px-1 text-sm">
+        <a href={profile.links.github} class="text-muted underline-offset-4 hover:text-fg hover:underline">GitHub</a>
+        <a href={profile.links.linkedin} class="text-muted underline-offset-4 hover:text-fg hover:underline">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section class="mt-16 sm:mt-20" aria-label="Impact in numbers">
+    <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+      {
+        metrics.map((m) => (
+          <div class="flex flex-col-reverse justify-end bg-surface p-5">
+            <dt class="mt-1.5 text-sm leading-snug text-muted">{m.label}</dt>
+            <dd class="font-mono text-2xl font-semibold tracking-tight text-accent sm:text-3xl">{m.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <!-- Selected work -->
+  <Section
+    id="work"
+    index="01 — Selected work"
+    title="Systems I’ve designed and shipped"
+    intro="Backend work doesn’t screenshot well, so here is what changed and what it did."
+  >
+    <ol class="grid gap-4">
+      {
+        work.map(({ id, data }) => (
+          <li class="group relative rounded-xl border border-line bg-surface p-6 transition-colors hover:border-accent/60">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="text-lg font-semibold tracking-tight">
+                {data.caseStudy ? (
+                  <a href={`/work/${id}/`} class="after:absolute after:inset-0">
+                    {data.title}
+                  </a>
+                ) : (
+                  data.title
+                )}
+              </h3>
+              <p class="font-mono text-xs text-muted">
+                {data.org} · {data.year}
+              </p>
+            </div>
+            <p class="mt-3 leading-7 text-muted">{data.summary}</p>
+            <p class="mt-4 font-mono text-sm text-accent">→ {data.outcome}</p>
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+              <Tags items={data.stack} />
+              {data.caseStudy && (
+                <span class="ml-auto inline-flex items-center gap-1 text-sm font-medium text-fg">
+                  Read case study
+                  <Icon
+                    name="arrow-up-right"
+                    class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </span>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <!-- Experience -->
+  <Section id="experience" index="02 — Experience" title="Where I’ve worked">
+    <ol class="space-y-12 border-l border-line pl-6 sm:pl-8">
+      {
+        experience.map((job) => (
+          <li class="relative">
+            <span
+              class="absolute top-[0.4rem] -left-[calc(1.5rem+5px)] size-2.5 rounded-full bg-accent ring-4 ring-bg sm:-left-[calc(2rem+5px)]"
+              aria-hidden="true"
+            />
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="font-semibold tracking-tight">
+                {job.role} <span class="text-muted">·</span> {job.company}
+                {job.note && <span class="font-normal text-muted"> ({job.note})</span>}
+              </h3>
+              <p class="font-mono text-xs text-muted">{job.period}</p>
+            </div>
+            <ul class="mt-3 space-y-2 text-[0.95rem] leading-7 text-muted">
+              {job.points.map((point) => (
+                <li class="relative pl-4 before:absolute before:top-[0.8rem] before:left-0 before:size-1 before:rounded-full before:bg-muted/60">
+                  {point}
+                </li>
+              ))}
+            </ul>
+            <div class="mt-4">
+              <Tags items={job.stack} />
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <!-- Projects -->
+  <Section id="projects" index="03 — Side projects" title="Things I build outside work">
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {
+        projects.map((p) => (
+          <li class="group relative flex flex-col rounded-xl border border-line bg-surface p-6 transition-colors hover:border-accent/60">
+            <h3 class="flex items-center justify-between gap-2 font-semibold tracking-tight">
+              <a href={p.href} class="after:absolute after:inset-0">
+                {p.name}
+              </a>
+              <Icon
+                name="arrow-up-right"
+                class="size-4 text-muted transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
+              />
+            </h3>
+            <p class="mt-3 flex-1 text-[0.95rem] leading-7 text-muted">{p.description}</p>
+            <div class="mt-5">
+              <Tags items={p.stack} />
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <!-- Skills -->
+  <Section id="skills" index="04 — Toolbox" title="What I work with">
+    <dl class="divide-y divide-line border-y border-line">
+      {
+        skills.map((s) => (
+          <div class="grid gap-2 py-4 sm:grid-cols-[10rem_1fr] sm:gap-6">
+            <dt class="font-mono text-xs tracking-wide text-muted uppercase sm:pt-1">{s.group}</dt>
+            <dd class="leading-7">{s.items.join(' · ')}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="mt-6 text-sm text-muted">
+      <span class="font-medium text-fg">{education.degree}</span> — {education.school}, {education.period}
+    </p>
+  </Section>
+
+  <!-- Contact -->
+  <Section id="contact" index="05 — Contact" title="Let’s talk">
+    <div class="rounded-xl border border-line bg-surface p-6 sm:p-8">
+      <p class="max-w-xl text-lg leading-8">
+        I’m looking for backend roles where reliability and scale matter. Email is the fastest way to reach me.
+      </p>
+      <a
+        href={`mailto:${profile.email}`}
+        class="mt-5 inline-block font-mono text-lg font-medium break-all text-accent underline-offset-4 hover:underline sm:text-xl"
+      >
+        {profile.email}
+      </a>
+      <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <a href={profile.links.linkedin} class="inline-flex items-center gap-1 text-muted hover:text-fg">
+          LinkedIn <Icon name="arrow-up-right" class="size-3.5" />
+        </a>
+        <a href={profile.links.github} class="inline-flex items-center gap-1 text-muted hover:text-fg">
+          GitHub <Icon name="arrow-up-right" class="size-3.5" />
+        </a>
+        <a href={profile.resume} target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-muted hover:text-fg">
+          View resume <Icon name="arrow-up-right" class="size-3.5" />
+        </a>
+        <a
+          href={profile.resume}
+          download={profile.resumeFileName}
+          class="inline-flex items-center gap-1 text-muted hover:text-fg"
+        >
+          Download resume (PDF) <Icon name="download" class="size-3.5" />
+        </a>
+      </div>
+    </div>
+  </Section>
+</Base>
